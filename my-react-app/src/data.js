@@ -1,0 +1,23 @@
+export const products = [
+  { id: 1, name: 'Mouse', price: 20,},
+  { id: 2, name: 'Keyboard', price: 50,},
+  { id: 3, name: 'Monitor', price: 200,},
+  { id: 4, name: 'CPU', price: 500,},
+  { id: 5, name: 'GPU', price: 1000,},
+  { id: 6, name: 'RAM', price: 150,},
+  { id: 7, name: 'Motherboard', price: 300,},
+  { id: 8, name: 'Power Supply', price: 100,},
+  { id: 9, name: 'Case', price: 80,},
+  { id: 10, name: 'Cooling System', price: 120,},
+  { id: 11, name: 'SSD', price: 200,},
+  { id: 12, name: 'HDD', price: 100,},
+  { id: 13, name: 'Optical Drive', price: 50,},
+  { id: 14, name: 'Sound Card', price: 70,},
+  { id: 15, name: 'Network Card', price: 60,},
+  { id: 16, name: 'Webcam', price: 80,},
+  { id: 17, name: 'Microphone', price: 90,},
+  { id: 18, name: 'Speakers', price: 100,},
+  { id: 19, name: 'Headphones', price: 150,},
+  { id: 20, name: 'VR Headset', price: 400,},
+  { id: 21, name: 'Game Controller', price: 60,}
+]
