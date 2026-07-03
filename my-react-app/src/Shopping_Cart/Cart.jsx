@@ -1,13 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo} from 'react';
 import ProductGrid from '../Product_listing/ProductGrid';
 import {products} from '../Product_listing/data';
+import useDebounce from '../hooks/useDebounce';
+
 
 function Cart() {
 
     const [cartItems, setCartItems] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const debouncedSearchTerm = useDebounce(searchTerm, 400);
+    
+    const filteredProducts = useMemo(() => {
+        console.log('Filtering products...'); 
+        return products.filter((product) =>
+            product.name.toLowerCase().startsWith(debouncedSearchTerm.toLowerCase())
+        );
+    }, [debouncedSearchTerm]);
 
     function handleAdd(product) {
-        setCartItems([...cartItems, { ...product, quantity: 1 }]);qq
+        setCartItems([...cartItems, { ...product, quantity: 1 }]);
     }
 
     function handleIncrement(id) {
@@ -35,9 +46,18 @@ function Cart() {
         <div>
             <h1>Products</h1>
             <p>Cart: {totalItems} items — ${totalPrice}</p>
+            <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {filteredProducts.length === 0 && (
+                <p>No products match "{debouncedSearchTerm}".</p>
+            )}
 
             <ProductGrid
-                products={products}
+                products={filteredProducts}
                 cartItems={cartItems}
                 onAdd={handleAdd}
                 onIncrement={handleIncrement}
