@@ -46,7 +46,7 @@ function Cart() {
         <div>
             <h1>Products</h1>
             <p>Cart: {totalItems} items — ${totalPrice}</p>
-            <input
+            <input className="search-bar"
                 type="text"
                 placeholder="Search products..."
                 value={searchTerm}
