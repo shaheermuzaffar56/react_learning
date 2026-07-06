@@ -1,17 +1,23 @@
+// App.jsx
 import { useState } from 'react'
-import './App.css'
-import StudentManager from './Student_CRUD/StudentManager'
+import { Routes, Route } from 'react-router-dom'
+import Layout from './Layout'
+import ProtectedRoute from './ProtectedRoute'
 import Cart from './Shopping_Cart/Cart'
-import { products } from './Product_listing/data'
-
+import StudentManager from './Student_CRUD/StudentManager'
 
 function App() {
- return (
-        <div className="container">
-            <h1 className="text-center my-4">Product List</h1>
-            <Cart />
-            <StudentManager />
-        </div>
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // dummy flag, not real auth
+
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Cart />} />
+        <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
+          <Route path="students" element={<StudentManager />} />
+        </Route>
+      </Route>
+    </Routes>
   );
 }
 export default App;

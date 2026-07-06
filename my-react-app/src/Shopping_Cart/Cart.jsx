@@ -52,6 +52,7 @@ function Cart() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
+            
             {filteredProducts.length === 0 && (
                 <p>No products match "{debouncedSearchTerm}".</p>
             )}
