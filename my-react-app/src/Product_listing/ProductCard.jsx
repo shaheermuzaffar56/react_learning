@@ -1,9 +1,12 @@
+import { Link } from 'react-router-dom'
 import Card from './Card';
 
 function ProductCard({ product, quantity, onAdd, onIncrement, onDecrement }) {
     return (
         <div>
-            <Card name={product.name} price={product.price} />
+            <Link to={`/${product.id}`}>
+                <Card name={product.name} price={product.price} />
+            </Link>
 
             {quantity === 0 ? (
                 <button onClick={() => onAdd(product)}>Add to Cart</button>
@@ -17,5 +20,4 @@ function ProductCard({ product, quantity, onAdd, onIncrement, onDecrement }) {
         </div>
     );
 }
-
 export default ProductCard;
