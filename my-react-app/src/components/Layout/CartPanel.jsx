@@ -16,7 +16,7 @@ function CartPanel() {
         <>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {cartItems.map((item) => (
-              <li key={`${item.id}-${item.variant?.id ?? 'default'}`}>
+              <li key={`${item.id}-${item.variantId}`}>
                 {item.name} × {item.quantity} — ${item.price * item.quantity}
               </li>
             ))}

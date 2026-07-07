@@ -1,20 +1,61 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import Card from './Card';
+import Card from './ProductsPage';
+import { categories } from './data';
 
-function ProductCard({ product, quantity, onAdd, onIncrement, onDecrement }) {
+
+function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, onDecrement }) {
+    const [selectedVariantId, setSelectedVariantId] = useState(productVariants[0].id);
+    const selectedVariant = productVariants.find((v) => v.id === Number(selectedVariantId));
+
+    const cartEntry = cartItems.find(
+        (item) => item.id === product.id && item.variantId === selectedVariant.id
+    );
+    const quantity = cartEntry ? cartEntry.quantity : 0;
+    const outOfStock = selectedVariant.stock === 0;
+
     return (
         <div>
             <Link to={`/${product.id}`}>
-                <Card name={product.name} price={product.price} />
+                <Card
+                    name={product.name}
+                    price={product.price}
+                    categoryName={categories.find((c) => c.id === product.categoryId)?.name}
+                />
             </Link>
 
+            {productVariants.length > 1 && (
+                <select
+                    value={selectedVariantId}
+                    onChange={(e) => setSelectedVariantId(Number(e.target.value))}
+                >
+                    {productVariants.map((v) => (
+                        <option key={v.id} value={v.id}>
+                            {Object.entries(v)
+                                .filter(([key]) => !['id', 'productId', 'stock'].includes(key))
+                                .map(([, val]) => val)
+                                .join(' / ')}
+                        </option>
+                    ))}
+                </select>
+            )}
+
+            <p>Stock: {selectedVariant.stock}</p>
+
             {quantity === 0 ? (
-                <button onClick={() => onAdd(product)}>Add to Cart</button>
+                <button disabled={outOfStock} onClick={() => onAdd(product, selectedVariant.id)}>
+                    {outOfStock ? 'Out of Stock' : 'Add to Cart'}
+                </button>
             ) : (
                 <div>
-                    <button onClick={() => onDecrement(product.id)}>-</button>
+                    <button onClick={() => onDecrement(product.id, selectedVariant.id)}>-</button>
                     <span> {quantity} </span>
-                    <button onClick={() => onIncrement(product.id)}>+</button>
+                    <button
+                        disabled={quantity >= selectedVariant.stock}
+                        onClick={() => onIncrement(product.id, selectedVariant.id)}
+                    >
+                        +
+                    </button>
                 </div>
             )}
         </div>

@@ -1,17 +1,18 @@
 import ProductCard from './ProductCard';
+import { variants } from './data';
 
 function ProductGrid({ products, cartItems, onAdd, onIncrement, onDecrement }) {
     return (
         <div className="grid">
             {products.map((product) => {
-                const cartEntry = cartItems.find((item) => item.id === product.id);
-                const quantity = cartEntry ? cartEntry.quantity : 0;
+                const productVariants = variants.filter((v) => v.productId === product.id);
 
                 return (
                     <ProductCard
                         key={product.id}
                         product={product}
-                        quantity={quantity}
+                        productVariants={productVariants}
+                        cartItems={cartItems}
                         onAdd={onAdd}
                         onIncrement={onIncrement}
                         onDecrement={onDecrement}
@@ -21,5 +22,4 @@ function ProductGrid({ products, cartItems, onAdd, onIncrement, onDecrement }) {
         </div>
     );
 }
-
 export default ProductGrid;

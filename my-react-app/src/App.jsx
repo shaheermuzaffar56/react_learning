@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout/Layout'
 import ProtectedRoute from './routes/ProtectedRoute'
-import Cart from './features/products/Cart'
+import ProductsPage from './features/products/ProductsPage'
 import StudentManager from './features/students/StudentManager'
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<Cart />} />
+        <Route index element={<ProductsPage />} />
         <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
           <Route path="students" element={<StudentManager />} />
         </Route>

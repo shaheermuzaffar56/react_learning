@@ -1,24 +1,27 @@
 import { createContext, useContext, useState } from 'react';
+import { variants } from '../features/products/data';
 
 const AppContext = createContext();
 
 export function AppProvider({ children }) {
-  // ---- Cart state ----
   const [cartItems, setCartItems] = useState([]);
 
-  function handleAdd(product, variant) {
-    setCartItems([...cartItems, { ...product, variant, quantity: 1 }]);
+  function handleAdd(product, variantId) {
+    setCartItems([
+      ...cartItems,
+      { id: product.id, name: product.name, price: product.price, variantId, quantity: 1 },
+    ]);
   }
 
   function handleIncrement(productId, variantId) {
     setCartItems(
-      cartItems.map((item) =>
-        item.id === productId && item.variant.id === variantId
-          ? item.quantity < item.variant.stock
-            ? { ...item, quantity: item.quantity + 1 } // only grows if stock allows
-            : item
-          : item
-      )
+      cartItems.map((item) => {
+        if (item.id !== productId || item.variantId !== variantId) return item;
+        const variant = variants.find((v) => v.id === variantId);
+        return item.quantity < variant.stock
+          ? { ...item, quantity: item.quantity + 1 }
+          : item; // already at stock limit, do nothing
+      })
     );
   }
 
@@ -26,7 +29,7 @@ export function AppProvider({ children }) {
     setCartItems(
       cartItems
         .map((item) =>
-          item.id === productId && item.variant.id === variantId
+          item.id === productId && item.variantId === variantId
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )
@@ -34,11 +37,8 @@ export function AppProvider({ children }) {
     );
   }
 
-  // ---- Search state ----
   const [searchTerm, setSearchTerm] = useState('');
-
-  // ---- Category filter state ----
-  const [selectedCategory, setSelectedCategory] = useState(null); // null = show all
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const value = {
     cartItems, handleAdd, handleIncrement, handleDecrement,
