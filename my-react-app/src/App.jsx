@@ -1,10 +1,10 @@
 
 import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import Layout from './Layout/Layout'
-import ProtectedRoute from './Routes/ProtectedRoute'
-import Cart from './Shopping_Cart/Cart'
-import StudentManager from './Student_CRUD/StudentManager'
+import Layout from './components/Layout/Layout'
+import ProtectedRoute from './routes/ProtectedRoute'
+import Cart from './features/products/Cart'
+import StudentManager from './features/students/StudentManager'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); 

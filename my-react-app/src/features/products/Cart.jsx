@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo} from 'react';
-import ProductGrid from '../Product_listing/ProductGrid';
-import {products} from '../Product_listing/data';
-import useDebounce from '../Hooks/useDebounce';
+import ProductGrid from './ProductGrid';
+import {products} from './data';
+import useDebounce from '../../hooks/useDebounce';
 
 
 function Cart() {
