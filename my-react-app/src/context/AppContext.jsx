@@ -37,6 +37,21 @@ export function AppProvider({ children }) {
     );
   }
 
+  function handleUpdateVariant(productId, oldVariantId, newVariantId) {
+  setCartItems(
+    cartItems.map((item) => {
+      if (item.id !== productId || item.variantId !== oldVariantId) return item;
+      const newVariant = variants.find((v) => v.id === newVariantId);
+      const cappedQuantity = Math.min(item.quantity, newVariant.stock);
+      return { ...item, variantId: newVariantId, quantity: cappedQuantity };
+    })
+  );
+}
+
+function handleRemove(productId, variantId) {
+  setCartItems(cartItems.filter((item) => !(item.id === productId && item.variantId === variantId)));
+}
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
 
@@ -44,6 +59,7 @@ export function AppProvider({ children }) {
     cartItems, handleAdd, handleIncrement, handleDecrement,
     searchTerm, setSearchTerm,
     selectedCategory, setSelectedCategory,
+    handleUpdateVariant, handleRemove,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import Card from './ProductsPage';
-import { categories } from './data';
+import Card from './Card';
+import { categories, getVariantLabel } from './data';
 
 
 function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, onDecrement }) {
@@ -30,12 +30,7 @@ function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, 
                     onChange={(e) => setSelectedVariantId(Number(e.target.value))}
                 >
                     {productVariants.map((v) => (
-                        <option key={v.id} value={v.id}>
-                            {Object.entries(v)
-                                .filter(([key]) => !['id', 'productId', 'stock'].includes(key))
-                                .map(([, val]) => val)
-                                .join(' / ')}
-                        </option>
+                        <option key={v.id} value={v.id}>{getVariantLabel(v)}</option>
                     ))}
                 </select>
             )}

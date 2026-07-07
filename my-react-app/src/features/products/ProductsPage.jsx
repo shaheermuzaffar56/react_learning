@@ -19,11 +19,13 @@ function ProductsPage() {
 
     return (
         <div>
+            <h2>{filteredProducts.length} products</h2>
+
             {filteredProducts.length === 0 && (
                 <p>No products match "{debouncedSearchTerm}".</p>
             )}
 
-            <ProductGrid
+        <ProductGrid
                 products={filteredProducts}
                 cartItems={cartItems}
                 onAdd={handleAdd}

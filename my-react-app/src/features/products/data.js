@@ -426,3 +426,10 @@ export const variants = [
   // Laptop Cooling Pad (productId: 100)
   { id: 115, productId: 100, fans: 'Dual Fan', stock: 19 }
 ];
+
+export function getVariantLabel(variant) {
+  return Object.entries(variant)
+    .filter(([key]) => !['id', 'productId', 'stock'].includes(key))
+    .map(([, val]) => val)
+    .join(' / ');
+}
