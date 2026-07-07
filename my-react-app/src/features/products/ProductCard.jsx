@@ -16,7 +16,7 @@ function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, 
 
     return (
         <div>
-            <Link to={`/${product.id}`}>
+            <Link to={`/product/${product.id}`}>
                 <Card
                     name={product.name}
                     price={product.price}

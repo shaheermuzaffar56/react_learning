@@ -7,15 +7,21 @@ import CartPanel from './CartPanel'
 function Layout() {
   return (
     <AppProvider>
-      <div style={{ display: 'flex' }}>
-        <Sidebar />
-        <div style={{ flex: 1 }}>
+      <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+        <div style={{ overflowY: 'auto' }}>
+          <Sidebar />
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
           <Navbar />
-          <div style={{ padding: '16px' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
             <Outlet />
           </div>
         </div>
-        <CartPanel />
+
+        <div style={{ overflowY: 'auto' }}>
+          <CartPanel />
+        </div>
       </div>
     </AppProvider>
   );
