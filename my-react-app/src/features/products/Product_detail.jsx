@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { products, variants, categories, getVariantLabel } from './data'
+import { products, variants, categories, getVariantAttributeKeys } from './data'
 import { useAppContext } from '../../context/AppContext'
 
 function ProductDetail() {
@@ -10,8 +10,38 @@ function ProductDetail() {
   const product = products.find((p) => p.id === Number(id));
   const productVariants = variants.filter((v) => v.productId === Number(id));
 
-  const [selectedVariantId, setSelectedVariantId] = useState(productVariants[0]?.id);
-  const selectedVariant = productVariants.find((v) => v.id === Number(selectedVariantId));
+  const attributeKeys = getVariantAttributeKeys(productVariants);
+
+  const [selectedAttrs, setSelectedAttrs] = useState(() => {
+    const first = productVariants[0];
+    return Object.fromEntries(attributeKeys.map((k) => [k, first?.[k]]));
+  });
+
+  const selectedVariant = productVariants.find((v) =>
+    attributeKeys.every((k) => v[k] === selectedAttrs[k])
+  );
+
+  useEffect(() => {
+    setSelectedAttrs((prev) => {
+      let updated = { ...prev };
+      let changed = false;
+
+      attributeKeys.forEach((key, index) => {
+        const validOptions = [...new Set(
+          productVariants
+            .filter((v) => attributeKeys.slice(0, index).every((k) => v[k] === updated[k]))
+            .map((v) => v[key])
+        )];
+
+        if (!validOptions.includes(updated[key])) {
+          updated[key] = validOptions[0];
+          changed = true;
+        }
+      });
+
+      return changed ? updated : prev;
+    });
+  }, [selectedAttrs, attributeKeys, productVariants]);
 
   if (!product) return <p>Product not found.</p>;
 
@@ -38,13 +68,27 @@ function ProductDetail() {
       <h1>{product.name}</h1>
       <p>${product.price}</p>
 
-      {productVariants.length > 1 && (
-        <select value={selectedVariantId} onChange={(e) => setSelectedVariantId(Number(e.target.value))}>
-          {productVariants.map((v) => (
-            <option key={v.id} value={v.id}>{getVariantLabel(v)}</option>
-          ))}
-        </select>
-      )}
+      {attributeKeys.map((key, index) => {
+        const validOptions = [...new Set(
+          productVariants
+            .filter((v) => attributeKeys.slice(0, index).every((k) => v[k] === selectedAttrs[k]))
+            .map((v) => v[key])
+        )];
+
+        return (
+          <select
+            key={key}
+            value={selectedAttrs[key]}
+            onChange={(e) =>
+              setSelectedAttrs((prev) => ({ ...prev, [key]: e.target.value }))
+            }
+          >
+            {validOptions.map((val) => (
+              <option key={val} value={val}>{val}</option>
+            ))}
+          </select>
+        );
+      })}
 
       <p>Stock: {selectedVariant.stock}</p>
 
@@ -61,5 +105,5 @@ function ProductDetail() {
       )}
     </div>
   );
-}
+} 
 export default ProductDetail;

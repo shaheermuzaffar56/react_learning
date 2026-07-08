@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Card from './Card';
-import { categories, getVariantLabel, getVariantAttributeKeys } from './data';
+import { categories, getVariantAttributeKeys } from './data';
 
 
 function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, onDecrement }) {
@@ -14,7 +14,7 @@ function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, 
 
     const selectedVariant = productVariants.find((v) =>
         attributeKeys.every((k) => v[k] === selectedAttrs[k])
-    );
+    ) || productVariants[0];
 
     const cartEntry = cartItems.find(
         (item) => item.id === product.id && item.variantId === selectedVariant.id
@@ -43,16 +43,35 @@ function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, 
                     <select
                         key={key}
                         value={selectedAttrs[key]}
-                        onChange={(e) =>
-                            setSelectedAttrs((prev) => ({ ...prev, [key]: e.target.value }))
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setSelectedAttrs((prev) => {
+                          const updated = { ...prev, [key]: newValue };
+
+                          // reset every dropdown after this one if its current value
+                          // is no longer valid given the new selection
+                          for (let i = index + 1; i < attributeKeys.length; i++) {
+                              const laterKey = attributeKeys[i];
+                              const validForLater = [...new Set(
+                                  productVariants
+                                      .filter((v) => attributeKeys.slice(0, i).every((k) => v[k] === updated[k]))
+                                      .map((v) => v[laterKey])
+                              )];
+            if (!validForLater.includes(updated[laterKey])) {
+                updated[laterKey] = validForLater[0];
             }
-        >
-            {validOptions.map((val) => (
-                <option key={val} value={val}>{val}</option>
-            ))}
-        </select>
-    );
-})}
+        }
+
+        return updated;
+    });
+}}
+                    >
+                        {validOptions.map((val) => (
+                            <option key={val} value={val}>{val}</option>
+                        ))}
+                    </select>
+                );
+            })}
 
             <p>Stock: {selectedVariant.stock}</p>
 
