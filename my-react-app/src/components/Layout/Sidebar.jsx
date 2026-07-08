@@ -11,7 +11,7 @@ function Sidebar() {
 
       <ul style={{ listStyle: 'none', padding: 0 }}>
         <li><Link to="/">Home</Link></li>
-        <li><Link to="/students">Student Manager</Link></li>
+        <li><Link to="/admin">Admin Manager</Link></li>
         <li>Deals</li>
         <li>Profile</li>
         <li>Contact</li>

@@ -19,7 +19,7 @@ function ProductDetail() {
 
   const selectedVariant = productVariants.find((v) =>
     attributeKeys.every((k) => v[k] === selectedAttrs[k])
-  );
+  ) || productVariants[0];
 
   useEffect(() => {
     setSelectedAttrs((prev) => {
@@ -79,9 +79,28 @@ function ProductDetail() {
           <select
             key={key}
             value={selectedAttrs[key]}
-            onChange={(e) =>
-              setSelectedAttrs((prev) => ({ ...prev, [key]: e.target.value }))
-            }
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setSelectedAttrs((prev) => {
+                          const updated = { ...prev, [key]: newValue };
+
+                          // reset every dropdown after this one if its current value
+                          // is no longer valid given the new selection
+                          for (let i = index + 1; i < attributeKeys.length; i++) {
+                              const laterKey = attributeKeys[i];
+                              const validForLater = [...new Set(
+                                  productVariants
+                                      .filter((v) => attributeKeys.slice(0, i).every((k) => v[k] === updated[k]))
+                                      .map((v) => v[laterKey])
+                              )];
+                                if (!validForLater.includes(updated[laterKey])) {
+                                 updated[laterKey] = validForLater[0];
+                                }
+                            }
+
+                            return updated;
+                          });
+                        }}
           >
             {validOptions.map((val) => (
               <option key={val} value={val}>{val}</option>

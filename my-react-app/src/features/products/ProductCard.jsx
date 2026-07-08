@@ -57,14 +57,14 @@ function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, 
                                       .filter((v) => attributeKeys.slice(0, i).every((k) => v[k] === updated[k]))
                                       .map((v) => v[laterKey])
                               )];
-            if (!validForLater.includes(updated[laterKey])) {
-                updated[laterKey] = validForLater[0];
-            }
-        }
+                                if (!validForLater.includes(updated[laterKey])) {
+                                 updated[laterKey] = validForLater[0];
+                                }
+                            }
 
-        return updated;
-    });
-}}
+                            return updated;
+                          });
+                        }}
                     >
                         {validOptions.map((val) => (
                             <option key={val} value={val}>{val}</option>
