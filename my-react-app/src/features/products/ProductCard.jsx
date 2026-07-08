@@ -1,12 +1,20 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Card from './Card';
-import { categories, getVariantLabel } from './data';
+import { categories, getVariantLabel, getVariantAttributeKeys } from './data';
 
 
 function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, onDecrement }) {
-    const [selectedVariantId, setSelectedVariantId] = useState(productVariants[0].id);
-    const selectedVariant = productVariants.find((v) => v.id === Number(selectedVariantId));
+    const attributeKeys = getVariantAttributeKeys(productVariants);
+
+    const [selectedAttrs, setSelectedAttrs] = useState(() => {
+        const first = productVariants[0];
+        return Object.fromEntries(attributeKeys.map((k) => [k, first[k]]));
+    });
+
+    const selectedVariant = productVariants.find((v) =>
+        attributeKeys.every((k) => v[k] === selectedAttrs[k])
+    );
 
     const cartEntry = cartItems.find(
         (item) => item.id === product.id && item.variantId === selectedVariant.id
@@ -24,16 +32,27 @@ function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, 
                 />
             </Link>
 
-            {productVariants.length > 1 && (
-                <select
-                    value={selectedVariantId}
-                    onChange={(e) => setSelectedVariantId(Number(e.target.value))}
-                >
-                    {productVariants.map((v) => (
-                        <option key={v.id} value={v.id}>{getVariantLabel(v)}</option>
-                    ))}
-                </select>
-            )}
+            {attributeKeys.map((key, index) => {
+                const validOptions = [...new Set(
+                    productVariants
+                        .filter((v) => attributeKeys.slice(0, index).every((k) => v[k] === selectedAttrs[k]))
+                        .map((v) => v[key])
+                )];
+
+                return (
+                    <select
+                        key={key}
+                        value={selectedAttrs[key]}
+                        onChange={(e) =>
+                            setSelectedAttrs((prev) => ({ ...prev, [key]: e.target.value }))
+            }
+        >
+            {validOptions.map((val) => (
+                <option key={val} value={val}>{val}</option>
+            ))}
+        </select>
+    );
+})}
 
             <p>Stock: {selectedVariant.stock}</p>
 

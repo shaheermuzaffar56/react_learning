@@ -5,7 +5,7 @@ import useDebounce from '../../hooks/useDebounce';
 import { useAppContext } from '../../context/AppContext';
 
 function ProductsPage() {
-    const { cartItems, handleAdd, handleIncrement, handleDecrement, searchTerm, selectedCategory } = useAppContext();
+    const { cartItems, handleAdd, handleIncrement   , handleDecrement, searchTerm, selectedCategory } = useAppContext();
 
     const debouncedSearchTerm = useDebounce(searchTerm, 400);
 

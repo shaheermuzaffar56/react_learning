@@ -8,13 +8,12 @@ import StudentManager from './features/students/StudentManager'
 import ProductDetail from './features/products/Product_detail'
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<ProductsPage />} />
-        <Route path="product/:id" element={<ProductDetail />} />
+        <Route index element={<ProductsPage />} />s
         <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
           <Route path="students" element={<StudentManager />} />
         </Route>
