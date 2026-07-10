@@ -1,7 +1,16 @@
 import { useAppContext } from '../../context/AppContext'
+import { useAuth } from '../../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 function Navbar() {
   const { searchTerm, setSearchTerm } = useAppContext();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    await logout();
+    navigate("/login");
+  }
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', backgroundColor: '#e0e0e0' }}>
@@ -15,7 +24,11 @@ function Navbar() {
       />
       <span>🔔</span>
       <span>🛒</span>
-      <span>👤</span>
+      {user ? (
+        <button onClick={handleLogout}>Logout ({user.displayName})</button>
+      ) : (
+        <span>👤</span>
+      )}
     </div>
   );
 }
