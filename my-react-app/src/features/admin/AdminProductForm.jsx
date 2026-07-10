@@ -1,72 +1,73 @@
 import { useState } from "react";
 import api from "../../api/axiosInstance";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { productSchema } from "./adminProductSchema";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function AdminProductForm({ onProductAdded }) {
-  const [formData, setFormData] = useState({ title: "", price: "", category: "" });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(productSchema),
+    defaultValues: { title: "", price: "", category: "" },
+  });
+  
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  function handleInputChange(e) {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  }
-
-  async function submitWithRetry(retriesLeft) {
-    try {
-      const response = await api.post("/products/add", formData);
-      return response.data;
-    } catch (error) {
-      if (retriesLeft > 0) {
-        await delay(1000);
-        return submitWithRetry(retriesLeft - 1);
-      }
-      throw error;
+async function submitWithRetry(data, retriesLeft) {
+  try {
+    const response = await api.post("/products/add", data);
+    return response.data;
+  } catch (error) {
+    if (retriesLeft > 0) {
+      await delay(1000);
+      return submitWithRetry(data, retriesLeft - 1);
     }
+    throw error;
   }
+}
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    if (!formData.title.trim()) return; // basic guard, no library needed yet
+async function onSubmit(data) {
+  setSubmitting(true);
+  setError(null);
 
-    setSubmitting(true);
-    setError(null);
-
-    try {
-      await submitWithRetry(2);
-      setFormData({ title: "", price: "", category: "" });
-      onProductAdded(); // tells AdminManager to refresh the list
-    } catch (error) {
-      setError("Failed to add product after multiple attempts.");
-    } finally {
-      setSubmitting(false);
-    }
+  try {
+    await submitWithRetry(data, 2);
+    reset();
+    onProductAdded();
+  } catch (error) {
+    setError("Failed to add product after multiple attempts.");
+  } finally {
+    setSubmitting(false);
   }
+}
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <input
         type="text"
-        name="title"
         placeholder="Product Title"
-        value={formData.title}
-        onChange={handleInputChange}
+        {...register("title")}
       />
+      {errors.title && <p className="field-error">{errors.title.message}</p>}
       <input
         type="text"
-        name="price"
         placeholder="Price"
-        value={formData.price}
-        onChange={handleInputChange}
+        {...register("price")}
       />
+      {errors.price && <p className="field-error">{errors.price.message}</p>}
       <input
         type="text"
-        name="category"
         placeholder="Category"
-        value={formData.category}
-        onChange={handleInputChange}
+        {...register("category")}
       />
+      {errors.category && <p className="field-error">{errors.category.message}</p>}
       <button type="submit" disabled={submitting}>
         {submitting ? "Adding..." : "Add Product"}
       </button>
