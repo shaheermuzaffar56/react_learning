@@ -3,6 +3,9 @@ import api from "../../api/axiosInstance";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { productSchema } from "./adminProductSchema";
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -49,30 +52,29 @@ async function onSubmit(data) {
 }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input
-        type="text"
-        placeholder="Product Title"
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400 }}>
+      <TextField
+        label="Product Title"
         {...register("title")}
+        error={!!errors.title}
+        helperText={errors.title?.message}
       />
-      {errors.title && <p className="field-error">{errors.title.message}</p>}
-      <input
-        type="text"
-        placeholder="Price"
+      <TextField
+        label="Price"
         {...register("price")}
+        error={!!errors.price}
+        helperText={errors.price?.message}
       />
-      {errors.price && <p className="field-error">{errors.price.message}</p>}
-      <input
-        type="text"
-        placeholder="Category"
+      <TextField
+        label="Category"
         {...register("category")}
+        error={!!errors.category}
+        helperText={errors.category?.message}
       />
-      {errors.category && <p className="field-error">{errors.category.message}</p>}
-      <button type="submit" disabled={submitting}>
+      <Button type="submit" variant="contained" disabled={submitting}>
         {submitting ? "Adding..." : "Add Product"}
-      </button>
-      {error && <p>{error}</p>}
-    </form>
+      </Button>
+    </Box>
   );
 }
 

@@ -2,6 +2,14 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Card from './Card';
 import { categories, getVariantAttributeKeys } from './data';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import Typography from '@mui/material/Typography';
 
 
 function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, onDecrement }) {
@@ -40,8 +48,9 @@ function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, 
                 )];
 
                 return (
-                    <select
+                    <Select
                         key={key}
+                        size="small"
                         value={selectedAttrs[key]}
                         onChange={(e) => {
                           const newValue = e.target.value;
@@ -67,29 +76,36 @@ function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, 
                         }}
                     >
                         {validOptions.map((val) => (
-                            <option key={val} value={val}>{val}</option>
+                            <MenuItem key={val} value={val}>{val}</MenuItem>
                         ))}
-                    </select>
+                    </Select>
                 );
             })}
 
-            <p>Stock: {selectedVariant.stock}</p>
+            <Typography variant="body2">Stock: {selectedVariant.stock}</Typography>
 
             {quantity === 0 ? (
-                <button disabled={outOfStock} onClick={() => onAdd(product, selectedVariant.id)}>
-                    {outOfStock ? 'Out of Stock' : 'Add to Cart'}
-                </button>
+              <Button
+                variant="contained"
+                disabled={outOfStock}
+                onClick={() => onAdd(product, selectedVariant.id)}
+              >
+                {outOfStock ? 'Out of Stock' : 'Add to Cart'}
+              </Button>
             ) : (
-                <div>
-                    <button onClick={() => onDecrement(product.id, selectedVariant.id)}>-</button>
-                    <span> {quantity} </span>
-                    <button
-                        disabled={quantity >= selectedVariant.stock}
-                        onClick={() => onIncrement(product.id, selectedVariant.id)}
-                    >
-                        +
-                    </button>
-                </div>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <IconButton size="small" onClick={() => onDecrement(product.id, selectedVariant.id)}>
+                  <RemoveIcon fontSize="small" />
+                </IconButton>
+                <Typography>{quantity}</Typography>
+                <IconButton
+                  size="small"
+                  disabled={quantity >= selectedVariant.stock}
+                  onClick={() => onIncrement(product.id, selectedVariant.id)}
+                >
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              </Box>
             )}
         </div>
     );

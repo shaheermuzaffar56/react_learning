@@ -1,41 +1,62 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAppContext } from '../../context/AppContext'
 import { categories } from '../../features/products/data'
+import Box from '@mui/material/Box'
+import List from '@mui/material/List'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
+import Divider from '@mui/material/Divider'
+import Typography from '@mui/material/Typography'
 
 function Sidebar() {
   const { selectedCategory, setSelectedCategory } = useAppContext();
+  const location = useLocation();
 
   return (
-    <nav style={{ width: '200px', padding: '10px', backgroundColor: '#f0f0f0' }}>
-      <p><strong>NAVIGATION</strong></p>
+    <Box sx={{ width: 200, p: 1.5, bgcolor: '#f0f0f0' }}>
+      <Typography variant="overline" fontWeight="bold">Navigation</Typography>
+      <List dense>
+        <ListItemButton component={Link} to="/" selected={location.pathname === '/'}>
+          <ListItemText primary="Home" />
+        </ListItemButton>
+        <ListItemButton component={Link} to="/admin" selected={location.pathname === '/admin'}>
+          <ListItemText primary="Admin Manager" />
+        </ListItemButton>
+        <ListItemButton component={Link} to="/students" selected={location.pathname === '/students'}>
+          <ListItemText primary="Students Manager" />
+        </ListItemButton>
+        <ListItemButton>
+          <ListItemText primary="Profile" />
+        </ListItemButton>
+        <ListItemButton>
+          <ListItemText primary="Contact" />
+        </ListItemButton>
+        <ListItemButton>
+          <ListItemText primary="Settings" />
+        </ListItemButton>
+      </List>
 
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/admin">Admin Manager</Link></li>
-        <li><Link to="/students">Student Manager</Link></li>
-        <li>Deals</li>
-        <li>Profile</li>
-        <li>Contact</li>
-        <li>Settings</li>
-      </ul>
+      <Divider sx={{ my: 1.5 }} />
 
-      <p><strong>CATEGORIES</strong></p>
-
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        <li>
-          <button onClick={() => setSelectedCategory(null)}>
-            {selectedCategory === null ? '✅ ' : ''}All
-          </button>
-        </li>
+      <Typography variant="overline" fontWeight="bold">Categories</Typography>
+      <List dense>
+        <ListItemButton
+          selected={selectedCategory === null}
+          onClick={() => setSelectedCategory(null)}
+        >
+          <ListItemText primary="All" />
+        </ListItemButton>
         {categories.map((category) => (
-          <li key={category.id}>
-            <button onClick={() => setSelectedCategory(category.id)}>
-              {selectedCategory === category.id ? '✅ ' : ''}{category.name}
-            </button>
-          </li>
+          <ListItemButton
+            key={category.id}
+            selected={selectedCategory === category.id}
+            onClick={() => setSelectedCategory(category.id)}
+          >
+            <ListItemText primary={category.name} />
+          </ListItemButton>
         ))}
-      </ul>
-    </nav>
+      </List>
+    </Box>
   );
 }
 export default Sidebar;
