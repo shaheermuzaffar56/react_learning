@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import { Link } from 'react-router-dom'
 import Card from './Card';
 import { categories, getVariantAttributeKeys } from './data';
@@ -110,4 +110,16 @@ function ProductCard({ product, productVariants, cartItems, onAdd, onIncrement, 
         </div>
     );
 }
-export default ProductCard;
+
+export default memo(ProductCard, (prevProps, nextProps) => {
+  if (prevProps.product !== nextProps.product) return false;
+  if (prevProps.productVariants !== nextProps.productVariants) return false;
+
+  const prevOwn = prevProps.cartItems.filter((i) => i.id === prevProps.product.id);
+  const nextOwn = nextProps.cartItems.filter((i) => i.id === nextProps.product.id);
+
+  if (prevOwn.length !== nextOwn.length) return false;
+  return prevOwn.every((item, i) =>
+    item.variantId === nextOwn[i].variantId && item.quantity === nextOwn[i].quantity
+  );
+});

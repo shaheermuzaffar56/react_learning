@@ -7,15 +7,15 @@ export function AppProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
 
   function handleAdd(product, variantId) {
-    setCartItems([
-      ...cartItems,
+    setCartItems((prev) => [
+      ...prev,
       { id: product.id, name: product.name, price: product.price, variantId, quantity: 1 },
     ]);
   }
 
   function handleIncrement(productId, variantId) {
-    setCartItems(
-      cartItems.map((item) => {
+    setCartItems((prev) =>
+      prev.map((item) => {
         if (item.id !== productId || item.variantId !== variantId) return item;
         const variant = variants.find((v) => v.id === variantId);
         return item.quantity < variant.stock
@@ -26,8 +26,8 @@ export function AppProvider({ children }) {
   }
 
   function handleDecrement(productId, variantId) {
-    setCartItems(
-      cartItems
+    setCartItems((prev) =>
+      prev
         .map((item) =>
           item.id === productId && item.variantId === variantId
             ? { ...item, quantity: item.quantity - 1 }
@@ -38,19 +38,21 @@ export function AppProvider({ children }) {
   }
 
   function handleUpdateVariant(productId, oldVariantId, newVariantId) {
-  setCartItems(
-    cartItems.map((item) => {
-      if (item.id !== productId || item.variantId !== oldVariantId) return item;
-      const newVariant = variants.find((v) => v.id === newVariantId);
-      const cappedQuantity = Math.min(item.quantity, newVariant.stock);
-      return { ...item, variantId: newVariantId, quantity: cappedQuantity };
-    })
-  );
-}
+    setCartItems((prev) =>
+      prev.map((item) => {
+        if (item.id !== productId || item.variantId !== oldVariantId) return item;
+        const newVariant = variants.find((v) => v.id === newVariantId);
+        const cappedQuantity = Math.min(item.quantity, newVariant.stock);
+        return { ...item, variantId: newVariantId, quantity: cappedQuantity };
+      })
+    );
+  }
 
-function handleRemove(productId, variantId) {
-  setCartItems(cartItems.filter((item) => !(item.id === productId && item.variantId === variantId)));
-}
+  function handleRemove(productId, variantId) {
+    setCartItems((prev) =>
+      prev.filter((item) => !(item.id === productId && item.variantId === variantId))
+    );
+  }
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
